@@ -31,7 +31,7 @@
 #elif defined(RG_TARGET_CROKPOCKET)
 #include "targets/crokpocket/config.h"
 #elif defined(RG_TARGET_REDROID_GO)
-#include "targets/redroid-go/config.h""
+#include "targets/redroid-go/config.h"
 #elif defined(RG_TARGET_RETROSP32)
 #include "targets/retrosp32/config.h"
 #else

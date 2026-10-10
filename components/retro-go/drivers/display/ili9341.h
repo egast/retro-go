@@ -165,12 +165,21 @@ static void lcd_set_window(int left, int top, int width, int height)
     int right = left + width - 1;
     int bottom = top + height - 1;
 
-    if (left < 0 || top < 0 || right >= display.screen.real_width || bottom >= display.screen.real_height)
-        RG_LOGW("Bad lcd window (x0=%d, y0=%d, x1=%d, y1=%d)\n", left, top, right, bottom);
+    if (left < 0 || top < 0 ||
+        right >= display.screen.real_width ||
+        bottom >= display.screen.real_height)
+        RG_LOGW("Bad lcd window (x0=%d, y0=%d, x1=%d, y1=%d)\n",
+                left, top, right, bottom);
 
-    ILI9341_CMD(0x2A, left >> 8, left & 0xff, right >> 8, right & 0xff); // Horiz
-    ILI9341_CMD(0x2B, top >> 8, top & 0xff, bottom >> 8, bottom & 0xff); // Vert
-    ILI9341_CMD(0x2C);                                                   // Memory write
+    // ST7789 170x320 panel: 35-row GRAM offset in landscape.
+    int gram_top = top + 35;
+    int gram_bottom = bottom + 35;
+
+    ILI9341_CMD(0x2A, left >> 8, left & 0xff,
+                right >> 8, right & 0xff);
+    ILI9341_CMD(0x2B, gram_top >> 8, gram_top & 0xff,
+                gram_bottom >> 8, gram_bottom & 0xff);
+    ILI9341_CMD(0x2C);
 }
 
 static inline uint16_t *lcd_get_buffer(size_t length)

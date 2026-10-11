@@ -12,6 +12,12 @@
 // Audio
 #define RG_AUDIO_USE_INT_DAC 0 // 0 = Disable, 1 = GPIO25, 2 = GPIO26, 3 = Both
 #define RG_AUDIO_USE_EXT_DAC 1 // 0 = Disable, 1 = Enable
+// Use the audio PLL for the I2S bit clock (MAX98357A has no MCLK, so this improves clock accuracy).
+#define RG_AUDIO_USE_APLL 1
+// I2S DMA ring: larger = more tolerance to CPU load spikes, at the cost of audio latency.
+// 6 * 256 frames = 1536 frames ~= 48ms at 32000Hz.
+#define RG_AUDIO_DMA_BUFFER_COUNT 6
+#define RG_AUDIO_DMA_BUFFER_LEN 256
 
 // Video
 #define RG_SCREEN_DRIVER       0 // 0 = ILI9341/ST7789

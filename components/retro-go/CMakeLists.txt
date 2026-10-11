@@ -20,6 +20,7 @@ component_compile_options(
     -Wno-unused-function
 )
 set_source_files_properties(
+    drivers/audio/i2s.c
     rg_audio.c rg_display.c rg_utils.c rg_surface.c libs/lodepng/lodepng.c
     PROPERTIES COMPILE_FLAGS
     -O2

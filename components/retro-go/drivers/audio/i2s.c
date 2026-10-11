@@ -23,8 +23,30 @@
 // We can safely assume that no application will submit more than 640 audio frames per call to
 // driver_submit (32000/50). Using a single large buffer risks blocking the call needlessly because
 // some apps submit more than once per cycle or there could be occasional jitter (early submission).
-#define DMA_BUFFER_COUNT 4
-#define DMA_BUFFER_LEN 180
+//
+// The ring must be large enough to ride out the worst-case delay between two submissions (eg when
+// the emulator is busy). Too small and the DAC runs out of data -> crackling/distortion. Both can be
+// overridden per-target (see RG_AUDIO_DMA_BUFFER_* in the target's config.h). Defaults give roughly
+// 6 * 256 = 1536 frames ~= 48ms of buffering at 32000Hz.
+#ifndef RG_AUDIO_DMA_BUFFER_COUNT
+#define RG_AUDIO_DMA_BUFFER_COUNT 6
+#endif
+#ifndef RG_AUDIO_DMA_BUFFER_LEN
+#define RG_AUDIO_DMA_BUFFER_LEN 256
+#endif
+#define DMA_BUFFER_COUNT RG_AUDIO_DMA_BUFFER_COUNT
+#define DMA_BUFFER_LEN RG_AUDIO_DMA_BUFFER_LEN
+
+// Some MCLK-less external DACs (eg MAX98357A) reconstruct their clock from BCK, so a low-jitter,
+// CPU-independent bit clock matters. Use the audio PLL when available. Enabled by default on the
+// original ESP32; opt-in on other chips via RG_AUDIO_USE_APLL in the target's config.h.
+#ifndef RG_AUDIO_USE_APLL
+#ifdef CONFIG_IDF_TARGET_ESP32
+#define RG_AUDIO_USE_APLL 1
+#else
+#define RG_AUDIO_USE_APLL 0
+#endif
+#endif
 
 static struct {
     const char *last_error;
@@ -71,7 +93,7 @@ static bool driver_init(int device, int sample_rate)
             .intr_alloc_flags = 0, // ESP_INTR_FLAG_LEVEL1
             .dma_buf_count = DMA_BUFFER_COUNT,
             .dma_buf_len = DMA_BUFFER_LEN,
-        #if CONFIG_IDF_TARGET_ESP32
+        #if RG_AUDIO_USE_APLL
             .use_apll = true, // External DAC may care about accuracy
         #endif
         }, 0, NULL);

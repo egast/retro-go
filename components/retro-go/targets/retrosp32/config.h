@@ -53,12 +53,13 @@
         {RG_KEY_DOWN,   .num = GPIO_NUM_8, .pullup = 1, .level = 0}, \
         {RG_KEY_LEFT,   .num = GPIO_NUM_45, .pullup = 1, .level = 0}, \
         {RG_KEY_SELECT, .num = GPIO_NUM_16, .pullup = 1, .level = 0}, \
+        {RG_KEY_START,  .num = GPIO_NUM_14, .pullup = 1, .level = 0},  \
         {RG_KEY_MENU,   .num = GPIO_NUM_18, .pullup = 1, .level = 0}, \
         {RG_KEY_OPTION, .num = GPIO_NUM_17,  .pullup = 1, .level = 0}, \
         {RG_KEY_A,      .num = GPIO_NUM_15, .pullup = 1, .level = 0}, \
         {RG_KEY_B,      .num = GPIO_NUM_5,  .pullup = 1, .level = 0}, \
 }
-//        {RG_KEY_START,  .num = GPIO_NUM_4, .pullup = 1, .level = 0},
+
 // Battery
 #define RG_BATTERY_DRIVER            1
 #define RG_BATTERY_ADC_UNIT          ADC_UNIT_1

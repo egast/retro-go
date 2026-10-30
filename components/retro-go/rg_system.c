@@ -261,8 +261,10 @@ static void system_monitor_task(void *arg)
         rg_system_set_indicator(RG_INDICATOR_POWER_LOW, (battery.present && battery.level <= 2.f));
         update_indicators(false);
 
+        rg_audio_counters_t audio_counters = rg_audio_get_counters();
+
         // Try to avoid complex conversions that could allocate, prefer rounding/ceiling if necessary.
-        rg_system_log(RG_LOG_DEBUG, NULL, "STACK:%d, HEAP:%d+%d (%d+%d), BUSY:%d%%, FPS:%d (S:%d R:%d+%d), BATT:%d",
+        rg_system_log(RG_LOG_DEBUG, NULL, "STACK:%d, HEAP:%d+%d (%d+%d), BUSY:%d%%, FPS:%d (S:%d R:%d+%d), BATT:%d, AUD:U%d O%d",
             statistics.freeStackMain,
             statistics.freeMemoryInt / 1024,
             statistics.freeMemoryExt / 1024,
@@ -273,7 +275,9 @@ static void system_monitor_task(void *arg)
             (int)roundf(statistics.skippedFPS),
             (int)roundf(statistics.partialFPS),
             (int)roundf(statistics.fullFPS),
-            (int)roundf((battery.volts * 1000) ?: battery.level));
+            (int)roundf((battery.volts * 1000) ?: battery.level),
+            (int)audio_counters.underflows,
+            (int)audio_counters.overflows);
 
         // Auto frameskip
         if (statistics.ticks > app.tickRate * 2)

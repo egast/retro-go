@@ -157,6 +157,22 @@
 #define RG_SCREEN_PARTIAL_UPDATES 1
 #endif
 
+// Offload audio submission to the second core via a ring buffer.
+// The producer (emulation core) only copies samples into the buffer and blocks
+// only when it's full; a dedicated task on core 1 feeds the I2S DMA. This keeps
+// the blocking i2s_write() off the emulation path and absorbs CPU spikes that
+// would otherwise starve the DMA and distort audio. Only enable on dual-core
+// chips (ESP32/ESP32-S3). Default off to avoid changing behavior on other targets.
+#ifndef RG_AUDIO_ASYNC
+#define RG_AUDIO_ASYNC 0
+#endif
+
+// How much audio (in milliseconds) the async ring buffer holds. Bigger absorbs
+// longer CPU spikes but adds button-to-sound latency. ~50ms is a good balance.
+#ifndef RG_AUDIO_ASYNC_BUFFER_MS
+#define RG_AUDIO_ASYNC_BUFFER_MS 50
+#endif
+
 #ifndef RG_SCREEN_SAFE_AREA
 #define RG_SCREEN_SAFE_AREA {0, 0, 0, 0}
 #endif

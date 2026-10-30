@@ -34,6 +34,8 @@ typedef struct
 {
     int64_t totalSamples;
     int64_t busyTime;
+    int64_t underflows; // async only: consumer woke but had nothing to play
+    int64_t overflows;  // async only: producer dropped samples because ring was full
 } rg_audio_counters_t;
 
 void rg_audio_init(int sample_rate);
